@@ -132,6 +132,11 @@ body * {
   outline: unset;
 }
 
+.actionbuttons .main.disabled {
+  filter: grayscale(100%) !important;
+  pointer-events: none !important;
+}
+
 .actionbuttons .secondary {
   color: #ababab;
   text-decoration: underline;
@@ -151,6 +156,30 @@ body * {
   top: 80%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.tyWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #f5f5f5;
+}
+
+.tyWrapper p {
+  width: 200px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.tyWrapper span {
+  font-size: 16px;
+  text-align: center;
+}
+
+.tyWrapper span.scorespan {
+  color: #6D87F4;
+  filter: drop-shadow(0 0 20px #6d87f4);
 }
 
 @keyframes heart {

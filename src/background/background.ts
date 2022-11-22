@@ -10,8 +10,6 @@ chrome.runtime.onMessage.addListener((message) => {
   if(message === "set-response") {
     chrome.storage.sync.get(['violations'], (res) => {
       const object = res.violations.data.sensitivity;
-      console.log(object);
-      
       const sum = Object.values(object).reduce((a:any, b:any) => parseInt(a) + parseInt(b));
       chrome.action.setBadgeText({
         text: sum+"",

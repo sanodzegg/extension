@@ -13,13 +13,21 @@ chrome.storage.sync.get(['username'], (res) => {
   else identifyUser = null; 
 });
 
+let aalr:any;
+
+chrome.storage.sync.get(['alreadyReported'], (res) => {
+  aalr = res.alreadyReported ? true : false;  
+})
+
 const App: React.FC<{}> = () => {
+  // chrome.storage.sync.clear();
   const unique = uuid();
+  const [alrState, setArlState] = useState(aalr);
   const [user, setUser] = useState(identifyUser);
   const [userName, setUserName] = useState("");
   const [violations, setViolations] = useState<any>([]);
   const [eligible, setEligible] = useState(false);
-
+  const [reported, setReported] = useState(false);
   useEffect(() => {
     if(userName.length > 2) setEligible(true);
     else setEligible(false);
@@ -33,15 +41,26 @@ const App: React.FC<{}> = () => {
 
   useEffect(() => {
     const handleLocalViolations = async () => {
-      chrome.storage.sync.get(['violations'], (res) => {
-        setViolations([res.violations.data.sensitivity]);
-      });
+      setTimeout(() => {
+        chrome.storage.sync.get(['violations'], (res) => {
+          setViolations([res.violations.data.sensitivity]);
+        });
+      }, 4000);
     }
 
     handleLocalViolations();
   }, []);
 
-  if(!user) {
+  useEffect(() => {
+    if(reported) {
+      chrome.storage.sync.set({ alreadyReported: "true" });
+      setTimeout(() => {
+        window.close();
+      }, 3000);
+    }
+  }, [reported])
+  
+  if(!user && !reported) {
     return (
       <div className="uiwrapper">
         <div className="greeter">
@@ -69,7 +88,10 @@ const App: React.FC<{}> = () => {
   
   const values = violations[0] && Object.values(violations[0]);
 
-  if(user && violations) {
+  const valuesSum = violations[0] && Object.values(violations[0]).reduce((a:any,b:any) => a + b);
+
+
+  if(user && violations && !reported) {
     return (
       <div className="uiwrapper">
         <div className="violations">
@@ -80,9 +102,22 @@ const App: React.FC<{}> = () => {
             })}           
           </ul>
           <div className="actionbuttons">
-            <button className='main'>Report this page</button>
+            <button className={`main${alrState ? ' disabled' : ''}`} onClick={() => setReported(true)}>{alrState ? "Already Reported" : "Report this page"}</button>
             <button className='secondary' onClick={() => window.close()}>Cancel</button>
           </div>
+        </div>
+      </div>
+    )
+  }  
+
+  if(reported) {
+    return (
+      <div className="uiwrapper">
+        <div className='tyWrapper'>
+          <motion.div initial={{scale: .5, opacity: 0}} animate={{scale: 1, opacity: 1}} transition={{duration: .5}}>
+            <p>Thank you for reporting the page.</p>
+            <p><span>Your score: </span><span className='scorespan'>{`${valuesSum}`}</span></p>
+          </motion.div>
         </div>
       </div>
     )

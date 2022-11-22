@@ -11,20 +11,21 @@ const sendCollectedData = async (data?: string): Promise<any> => {
             uuid: res.id,
             text: data
         }
-        // const request = await axios.post("https://e1c4-212-58-103-210.eu.ngrok.io/api/v1/check_sensitivity", requestObject);
+        // const request = await axios.post("https://d552-217-147-224-178.eu.ngrok.io/api/v1/check_sensitivity", requestObject);
         // const response = await request.data;
+
         const response = {
             error: false,
             error_msg: null,
             data: {
                 "sensitivity": {
-                    "identity_attack": 34,
-                    "insult": 79,
-                    "obscene": 100,
-                    "severe_toxicity": 47,
-                    "sexual_explicit": 98,
-                    "threat": 3,
-                    "toxicity": 12
+                    "identity_attack": Math.floor(Math.random() * 30),
+                    "insult": Math.floor(Math.random() * 50),
+                    "obscene": Math.floor(Math.random() * 10),
+                    "severe_toxicity": Math.floor(Math.random() * 50),
+                    "sexual_explicit": Math.floor(Math.random() * 45),
+                    "threat": Math.floor(Math.random() * 30),
+                    "toxicity": Math.floor(Math.random() * 20)
                 }
             }
         }
@@ -33,7 +34,7 @@ const sendCollectedData = async (data?: string): Promise<any> => {
             chrome.storage.sync.set({violations: response}, () => {
                 chrome.runtime.sendMessage('set-response');
             });
-        } 
+        }
     });
 }
 
